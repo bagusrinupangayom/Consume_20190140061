@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Data Karyawan</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -41,25 +41,28 @@
         </div>
     </nav>
 
-    <div class="table-primary">
-        <table class="table table-responsive table-striped">
-            <thead class="table-light">
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Nama Depan</th>
-                    <th scope="col">Nama Belakang</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Edit Data</th>
-                    <th scope="col">Hapus Data</th>
-                </tr>
-            </thead>
-            <tbody id="mytable">
-                <tr>
-                    <th scope="row" colspan="5">Loading</th>
-                </tr>
-            </tbody>
-        </table>
+    <div class="tabelku pt-5">
+        <div class="table-primary mt-2">
+            <table class="table table-responsive table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nama Depan</th>
+                        <th scope="col">Nama Belakang</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Edit Data</th>
+                        <th scope="col">Hapus Data</th>
+                    </tr>
+                </thead>
+                <tbody id="mytable">
+                    <tr>
+                        <th scope="row" colspan="5">Loading</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
 
 
     <script>

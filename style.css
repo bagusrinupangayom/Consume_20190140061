@@ -10,6 +10,11 @@
     background-repeat: no-repeat;
 }
 
+.tabelku {
+    padding: 10px;
+    margin-bottom: 100px;
+}
+
 .kartu {
     margin-top: 5rem;
 }
