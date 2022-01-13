@@ -17,6 +17,7 @@
 
 .kartu {
     margin-top: 5rem;
+    box-shadow: 0 5px 1px rgba(black, .95);
 }
 
 .data {
