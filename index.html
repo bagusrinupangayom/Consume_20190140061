@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <title>Data Sistem Karyawan</title>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Data Karyawan</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li>
+                        <input class="form-control" id="myInput" type="text" placeholder="Cari Data Karyawan..">
+                    </li>
+                    <li>
+                        <button class="btn btn-dark" onclick="showUserCreateBox()">Tambah Karyawan</button>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="btn btn-danger" href="http://localhost:8080/Consume/login.html">Sign Out</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="table-primary">
+        <table class="table table-responsive table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nama Depan</th>
+                    <th scope="col">Nama Belakang</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Edit Data</th>
+                    <th scope="col">Hapus Data</th>
+                </tr>
+            </thead>
+            <tbody id="mytable">
+                <tr>
+                    <th scope="row" colspan="5">Loading</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#mytable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        function loadTable() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "http://127.0.0.1:8090/karyawan");
+            xhttp.send();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(this.responseText);
+                    var trHtml = '';
+                    const objects = JSON.parse(this.responseText);
+                    for (let object of objects) {
+                        trHtml += '<tr>';
+                        trHtml += '<td>' + object['id'] + '</td>';
+                        trHtml += '<td>' + object['namaDepan'] + '</td>';
+                        trHtml += '<td>' + object['namaBelakang'] + '</td>';
+                        trHtml += '<td>' + object['email'] + '</td>';
+                        trHtml +=
+                            '<td><button type="button" class="btn btn-success" onclick = "showUserEditBox(' +
+                            object['id'] + ')">Edit</button></td>';
+                        trHtml += '<td><button type="button" class="btn btn-danger" onclick="userDelete(' +
+                            object['id'] + ')"> Hapus</button></td>';
+                        trHtml += '</tr>';
+                    }
+                    document.getElementById("mytable").innerHTML = trHtml;
+                }
+            };
+        }
+        loadTable();
+
+        function showUserCreateBox() {
+            Swal.fire({
+                title: 'Tambah Karyawan',
+                html: '<input id="id" class="swal2-input" placeholder="ID">' +
+                    '<input id="namaDepan" class="swal2-input" placeholder="Nama Depan">' +
+                    '<input id="namaBelakang" class="swal2-input" placeholder="Nama Belakang">' +
+                    '<input id="email" class="swal2-input" placeholder="Email">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    userCreate();
+                }
+            })
+        }
+
+        function userCreate() {
+            const id = document.getElementById("id").value;
+            const namaDepan = document.getElementById("namaDepan").value;
+            const namaBelakang = document.getElementById("namaBelakang").value;
+            const email = document.getElementById("email").value;
+
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://127.0.0.1:8090/karyawan");
+            xhttp.setRequestHeader("Content-Type", "application/json;");
+            xhttp.send(JSON.stringify({
+                "id": id,
+                "namaDepan": namaDepan,
+                "namaBelakang": namaBelakang,
+                "email": email
+            }));
+            location.assign("http://localhost:8080/Consume/index.html")
+            xhttp.onreadystatechange = function () {
+                if (this.status == 200) {
+                    const objects = JSON.parse(this.responseText);
+                    Swal.fire(objects['message']);
+                    loadTable();
+                }
+            }
+        }
+
+        // Untuk Edit
+        function showUserEditBox(id) {
+            console.log(id);
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "http://127.0.0.1:8090/karyawan/" + id);
+            xhttp.send();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    const objects = JSON.parse(this.responseText);
+                    const karyawan = objects["karyawan"];
+                    console.log(karyawan);
+                    Swal.fire({
+                        title: 'Edit Karyawan',
+                        html: '<input id="id" type="hidden" value="' + objects['id'] + '">' +
+                            '<input id="namaDepan" class="swal2-input" placeholder="Nama Depan" value="' +
+                            objects['namaDepan'] + '">' +
+                            '<input id="namaBelakang" class="swal2-input" placeholder="Nama Belakanng" value="' +
+                            objects['namaBelakang'] + '">' +
+                            '<input id="email" class="swal2-input" placeholder="Email" value="' +
+                            objects['email'] + '">',
+                        focusConfirm: false,
+                        preConfirm: () => {
+                            userEdit();
+                        }
+                    })
+                }
+            };
+        }
+
+        function userEdit() {
+            const id = document.getElementById("id").value;
+            const namaDepan = document.getElementById("namaDepan").value;
+            const namaBelakang = document.getElementById("namaBelakang").value;
+            const email = document.getElementById("email").value;
+
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("PUT", "http://127.0.0.1:8090/karyawan/updateKaryawan");
+            xhttp.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+            xhttp.send(JSON.stringify({
+                "id": id,
+                "namaDepan": namaDepan,
+                "namaBelakang": namaBelakang,
+                "email": email
+            }));
+            xhttp.onreadystatechange = function () {
+                if (this.status == 200) {
+                    location.assign("http://localhost:8080/Consume/index.html")
+                    const objects = JSON.parse(this.responseText);
+                    Swal.fire(objects['message']);
+                    loadTable();
+                }
+            }
+        }
+
+        // Untuk Delete
+        function userDelete(id) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("DELETE", "http://127.0.0.1:8090/karyawan/" + id);
+            xhttp.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+            xhttp.send(JSON.stringify({
+                "id": id
+            }));
+            xhttp.onreadystatechange = function () {
+                location.assign("http://localhost:8080/Consume/index.html")
+                var del = confirm("Apakah Anda yakin ingin menghapus data ini?");
+                if (del == true, this.status == 200) {
+                    const objects = JSON.parse(this.responseText);
+                    Swal.fire(objects["message"]);
+                    loadTable();
+
+                } else {
+                    return false;
+                }
+
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>

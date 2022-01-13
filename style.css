@@ -1,0 +1,33 @@
+* {
+    font-size: 16px;
+}
+
+.login {
+    background-image: url(https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80);
+    background-size: cover;
+    height: 500px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.kartu {
+    margin-top: 5rem;
+}
+
+.data {
+    display: none;
+}
+
+.g-signin2 {
+    position: center;
+    margin: auto;
+}
+
+.viewdata {
+    text-decoration: none;
+}
+
+#updateForm,
+#newForm {
+    display: none;
+}
